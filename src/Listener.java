@@ -6,25 +6,30 @@ import java.net.Socket;
  */
 public class Listener extends Thread {
     private Socket client;
+    private String name;
 
-    private DataInputStream input;
-    private DataOutputStream output;
+    public ObjectInputStream input;
+    public ObjectOutputStream output;
+
+    public void setClientName(String name){
+        this.name = name;
+    }
+
+    public String getClientName(){
+        return this.name;
+    }
 
     public void run(){
+
+
+
         while (true){
             byte[] inp = new byte[1000];
-
-            try {
-                input.read(inp);
-                System.out.println("Read and received byte from client");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
             Packet packet = null;
 
             try {
-                packet = Util.deserialize(inp);
+                packet = (Packet)input.readObject();
+//                packet = Util.deserialize(inp);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
@@ -33,24 +38,15 @@ public class Listener extends Thread {
 
             System.out.println(packet.getUser() + ": " + packet.getMessage());
 
-            try {
-                output.writeBytes("RECEIVED");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
+    }
+
+    public void send_message(String message, String client_name) throws IOException {
+        output.writeObject(new Packet(message, client_name));
     }
 
 
     public Listener(Socket client){
-
-        try {
-            this.input = new DataInputStream(client.getInputStream());
-            this.output = new DataOutputStream(client.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         this.client = client;
-
     }
 }

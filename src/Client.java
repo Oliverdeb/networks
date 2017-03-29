@@ -5,12 +5,13 @@ import java.util.Scanner;
 /**
  * Created by dbroli001 on 2017/03/28.
  */
+
 public class Client {
 
     private Socket client_socket = null;
     private Scanner c = new Scanner(System.in);
-    private DataInputStream input;
-    private DataOutputStream output;
+    private ObjectInputStream input;
+    private ObjectOutputStream output;
     private String name;
 
     public static void main(String[] args) {
@@ -18,9 +19,12 @@ public class Client {
     }
 
 
+    public void send_messsage(String message, String name) throws IOException {
+        //Util.serialize(message, name)
+        output.writeObject(new Packet(message, name));
+    }
 
     public Client(){
-
 
         try{
             client_socket = new Socket("localhost", 9600);
@@ -34,8 +38,17 @@ public class Client {
 
 
         try {
-            input = new DataInputStream(client_socket.getInputStream());
-            output = new DataOutputStream(client_socket.getOutputStream());
+            output = new ObjectOutputStream(client_socket.getOutputStream());
+
+            input = new ObjectInputStream(client_socket.getInputStream());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            // Send client name intially
+            send_messsage("", name);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -44,21 +57,39 @@ public class Client {
             System.out.print("You: ");
 
             try {
-
-                output.write(Util.serialize(c.nextLine(), name));
-
+                send_messsage(c.nextLine(), name);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+            byte[] inp = new byte[1000];
+            Packet packet = null;
+            System.out.println("stuck here?");
             try {
 
-                inp = input.read;
+                packet = (Packet) input.readObject();
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
+            System.out.println("nope got passed");
 
-            System.out.println("Server: " + inp.toString());
+//            Packet packet = null;
+//            try {
+//                packet = Util.deserialize(inp);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            }
+
+            if (packet.getUser().equals("server")){
+
+                System.out.println(packet.getMessage());
+            }else{
+                System.out.println(packet.getUser()+ ": " + packet.getMessage());
+            }
 
 
         }
