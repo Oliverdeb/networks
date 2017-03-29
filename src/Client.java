@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Client {
 
     private Socket client_socket = null;
-    private Scanner c = new Scanner(System.in);
+    private Scanner cInputScanner = new Scanner(System.in);
     private ObjectInputStream input;
     private ObjectOutputStream output;
     private String name;
@@ -33,7 +33,7 @@ public class Client {
 
         System.out.println("Connected to server at " + client_socket.getInetAddress());
         System.out.print("Please enter your name: ");
-        name = c.nextLine();
+        name = cInputScanner.nextLine();
 
 
         try {
@@ -52,13 +52,13 @@ public class Client {
             e.printStackTrace();
         }
 
-        Thread inputHandler = new Thread() {
+        Thread outputHandler = new Thread() {
+            // Output thread
             public void run(){
                 while(true){
                     Packet packet = null;
 
                     try {
-
                         packet = (Packet) input.readObject();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -66,22 +66,25 @@ public class Client {
                         e.printStackTrace();
                     }
                     if (packet.getUser().equals("server")){
-
+                        // For User X has joined the room
                         System.out.println(packet.getMessage());
                     }else{
-                        System.out.println(packet.getTime() + " "+ packet.getUser()+ ": " + packet.getMessage());
+                        // For normal message output
+                        System.out.println(packet.getTime() + " " + packet.getUser()+ ": " + packet.getMessage());
                     }
                 }
 
             }
         };
-        inputHandler.start();
+        outputHandler.start();
 
         while (true) {
+            // input thread
             System.out.print("You: ");
 
             try {
-                send_messsage(c.nextLine(), name, TimeUtil.time_now());
+                // Send message to server
+                send_messsage(cInputScanner.nextLine(), name, TimeUtil.time_now());
             } catch (IOException e) {
                 e.printStackTrace();
             }

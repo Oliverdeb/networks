@@ -18,14 +18,6 @@ public class Server {
 
     public Server(){
 
-//        Thread t = new Thread() {
-//            public void run() {
-//                System.out.println("blah");
-//            }
-//        };
-//
-//
-//        t.start();
        try{
             server_socket = new ServerSocket(9600);
 
@@ -39,6 +31,9 @@ public class Server {
 
         while(true){
             try{
+                /*
+                Accept new client connections and create a thread to handle them.
+                 */
                 newclient = server_socket.accept();
                 System.out.println("NEW CONNECTION FROM " + newclient.getInetAddress());
                 System.out.println("Starting listener for new client");
@@ -58,14 +53,14 @@ public class Server {
         }
 
 
-//        close_connections();
     }
 
     public void broadcast_new_client(Socket client, Listener listener){
-        byte[] data = new byte[1000];
+
+        /*
+        Broadcast to all connected clients when a new client joins the room
+         */
         try {
-//            new DataInputStream(client.getInputStream()).read(data);
-//            Packet p = (Util.deserialize(data));
 
             Packet p = (Packet)listener.input.readObject();
             listener.setClientName(p.getUser());
@@ -80,9 +75,14 @@ public class Server {
     }
 
     public void relay_message(String message, String client_name, String time) throws IOException {
-        System.out.println("trying to relay");
+
+        /*
+        Relay new message to all connected clients.
+         */
+
         System.out.println(message);
         for(Listener client : clients) {
+            // Loop through list of clients and send the message to them
             System.out.println("relaying to " + client.getClientName());
             client.send_message(message, client_name, time);
         }
