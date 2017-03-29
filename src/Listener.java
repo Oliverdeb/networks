@@ -20,29 +20,42 @@ public class Listener extends Thread {
     }
 
     public void run(){
-
-
-
         while (true){
             byte[] inp = new byte[1000];
             Packet packet = null;
 
             try {
                 packet = (Packet)input.readObject();
-//                packet = Util.deserialize(inp);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
 
-            System.out.println(packet.getUser() + ": " + packet.getMessage());
+            if (packet.getMessage().startsWith("/w ")){
+                // handle whisper
+            } else {
+                for (Listener client : Server.clients){
+                    if (client.equals(this)) {
+                        continue;
+                    }else{
+                        try {
+                            client.send_message(packet.getMessage(), packet.getUser(), TimeUtil.time_now());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            System.out.println(packet.getTime() + " " +packet.getUser() + ": " + packet.getMessage());
+            System.out.flush();
 
         }
     }
 
-    public void send_message(String message, String client_name) throws IOException {
-        output.writeObject(new Packet(message, client_name));
+    public void send_message(String message, String client_name, String time) throws IOException {
+        output.writeObject(new Packet(message, client_name, time));
     }
 
 

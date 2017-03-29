@@ -8,12 +8,14 @@ public class Packet implements Serializable{
 
     private String message;
     private String user;
+    private String time;
     private Image img;
 
 
-    public Packet(String message, String user){
+    public Packet(String message, String user, String time){
         this.message = message;
         this.user = user;
+        this.time = time;
     }
 
     public void setImg(Image img){
@@ -22,6 +24,10 @@ public class Packet implements Serializable{
 
     public Image getImg(){
         return this.img;
+    }
+
+    public String getTime(){
+        return this.time;
     }
 
     public String getMessage() {

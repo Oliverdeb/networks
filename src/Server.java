@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Server {
 
     private ServerSocket server_socket = null;
-    private ArrayList<Listener> clients = new ArrayList<>(5);
+    public static ArrayList<Listener> clients = new ArrayList<>(5);
 
 
     public static void main(String[] args) {
@@ -53,7 +53,7 @@ public class Server {
 
 
             }catch(Exception e){
-                e.printStackTrace();
+                System.out.println("Many problems");
             }
         }
 
@@ -69,7 +69,7 @@ public class Server {
 
             Packet p = (Packet)listener.input.readObject();
             listener.setClientName(p.getUser());
-            relay_message( p.getUser()+ " joined the room.", "server");
+            relay_message( p.getUser()+ " joined the room.", "server", TimeUtil.time_now());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -79,12 +79,12 @@ public class Server {
 
     }
 
-    public void relay_message(String message, String client_name) throws IOException {
+    public void relay_message(String message, String client_name, String time) throws IOException {
         System.out.println("trying to relay");
         System.out.println(message);
         for(Listener client : clients) {
             System.out.println("relaying to " + client.getClientName());
-            client.send_message(message, client_name);
+            client.send_message(message, client_name, time);
         }
     }
 
