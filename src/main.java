@@ -7,16 +7,23 @@ import java.util.Scanner;
  */
 public class main {
 
+    /**
+     * Implement stack for new messages
+     * @param args
+     */
     public static void main(String[] args) {
-        System.out.print("testing: ");
-        Scanner c = new Scanner(System.in);
-        System.out.println(c.next());
-        // check for new messages on queue?
+
+        System.out.print("Client starting up");
+
         try {
             Socket sock = new Socket("test", 8000);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Socket OK.");
     }
+
+
 
 }
