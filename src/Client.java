@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
+import java.io.Console;
+import java.util.Stack;
 
 /**
  * Created by dbroli001 on 2017/03/28.
@@ -13,9 +15,12 @@ public class Client {
     private ObjectInputStream input;
     private ObjectOutputStream output;
     private String name;
+    private boolean writing = false;
+    private Stack<String> mess =new Stack<String>();
 
     public static void main(String[] args) {
         new Client();
+        
     }
 
 
@@ -70,7 +75,12 @@ public class Client {
                         System.out.println(packet.getMessage());
                     }else{
                         // For normal message output
-                        System.out.println(packet.getTime() + " " + packet.getUser()+ ": " + packet.getMessage());
+                        if (!writing ){
+                           System.out.println(packet.getTime() + " " + packet.getUser()+ ": " + packet.getMessage()); 
+                       }else{
+                            mess.push(packet.getTime() + " " + packet.getUser()+ ": " + packet.getMessage());
+                       }
+                        
                     }
                 }
 
@@ -80,11 +90,21 @@ public class Client {
 
         while (true) {
             // input thread
+            Console c = System.console();
+            System.out.println("Press enter to type message :");
+            c.readLine();
+            writing = true;
             System.out.print("You: ");
 
             try {
                 // Send message to server
                 send_messsage(cInputScanner.nextLine(), name, TimeUtil.time_now());
+                writing = false;
+                if (mess.size() != 0){
+                    while (mess.size() != 0){
+                        System.out.println(mess.pop());
+                    }
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
