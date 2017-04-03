@@ -10,12 +10,21 @@ public class Packet implements Serializable{
     private String user;
     private String time;
     private Image img;
+    private String type;
 
 
     public Packet(String message, String user, String time){
         this.message = message;
         this.user = user;
         this.time = time;
+        this.type = null;
+    }
+
+    public Packet(String message, String user, String time, String type){
+        this.message = message;
+        this.user = user;
+        this.time = time;
+        this.type = type;
     }
 
     public void setImg(Image img){
@@ -27,11 +36,14 @@ public class Packet implements Serializable{
     }
 
     public String getTime(){
-        return this.time;
+        return time;
     }
 
     public String getMessage() {
         return message;
+    }
+    public String getType(){
+        return type;
     }
 
     public String getUser() {

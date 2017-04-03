@@ -64,7 +64,7 @@ public class Server {
 
             Packet p = (Packet)listener.input.readObject();
             listener.setClientName(p.getUser());
-            relay_message( p.getUser()+ " joined the room.", "server", TimeUtil.time_now());
+            relay_message( p.getUser()+ " joined the room.", "server", Util.time_now());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

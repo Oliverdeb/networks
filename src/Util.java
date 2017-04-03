@@ -1,27 +1,21 @@
-import java.io.*;
+import java.sql.Time;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 /**
  * Created by dbroli001 on 2017/03/29.
  */
-public class  Util {
+public class Util {
 
-//
-//    public static Packet deserialize(byte[] data) throws IOException, ClassNotFoundException {
-//        ByteArrayInputStream input = new ByteArrayInputStream(data);
-//        ObjectInputStream inp = null;
-//        inp = new ObjectInputStream(input);
-//
-//        return (Packet) inp.readObject();
-//    }
-//
-//    public static byte[] serialize(String message, String client) throws IOException {
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        ObjectOutputStream oos = new ObjectOutputStream(baos);
-//
-//        oos.writeObject(new Packet(message, client));
-//
-//        return baos.toByteArray();
-//    }
+    public static String time_now(){
 
+        ZoneId zoneId = ZoneId.of("Africa/Harare");
+        ZonedDateTime time = ZonedDateTime.now(zoneId);
 
+        return "[" + time.getHour()+ ":" + String.format("%02d", time.getMinute()) + "]";
+    }
+
+    public static String parse_message(String input, String user){
+        return input.substring(input.indexOf(user)+user.length());
+    }
 }
