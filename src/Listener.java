@@ -40,12 +40,7 @@ public class Listener extends Thread {
                         send_message("Incorrect usage.\n/w <user> <msg>", "server", Util.time_now());
                     } else if (findClient(message_segments[1]) == null) {
                         send_message("Couldn't find user " + message_segments[1], "server", Util.time_now());
-                    }
-                }catch (IOException io){
-                    io.printStackTrace();
-                }
-
-                try {
+                    }else{
                     /*
                     Sending the actual whisper message
                      */
@@ -53,15 +48,23 @@ public class Listener extends Thread {
                     client.send_message(
                             Util.parse_message(packet.getMessage(), message_segments[1]),
                             message_segments[1],
-                            Util.time_now()
+                            Util.time_now(),
+                            "PM"
                     );
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    }
+                }catch (IOException io){
+                    io.printStackTrace();
                 }
 
+
+
             } else if (packet.getMessage().startsWith("/file ")){
-                // send img file
-            } else {
+
+                imageHandler(packet);
+
+            } else if (packet.getMessage().startsWith("/quit")) {
+
+            }else{
                 for (Listener client : Server.clients){
                     if (client.equals(this)) {
                         continue;
@@ -79,6 +82,24 @@ public class Listener extends Thread {
             System.out.flush();
 
         }
+    }
+
+    public void imageHandler(Packet packet){
+        File file = new File(Util.parse_location(packet.getMessage()));
+
+
+    }
+
+    public void send_connected_users() throws IOException {
+        /*
+        Sends a list of the currently connected users.
+         */
+        String msg =    "Connected users\n" +
+                        "---------------";
+        for (int i = 0; i < Server.clients.size(); i++) {
+            msg += "\n" + i + ": " + Server.clients.get(i).getClientName();
+        }
+        send_message(msg, "server", Util.time_now());
     }
 
     public void send_message(String message, String client_name, String time) throws IOException {

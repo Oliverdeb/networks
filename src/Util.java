@@ -16,6 +16,12 @@ public class Util {
     }
 
     public static String parse_message(String input, String user){
-        return input.substring(input.indexOf(user)+user.length());
+        return input.substring(input.indexOf(user)+user.length()+1);
     }
+
+    public static String parse_location(String input){
+        return input.substring(input.indexOf("file ") + 5);
+    }
+
+
 }

@@ -22,6 +22,7 @@ public class Server {
             server_socket = new ServerSocket(9600);
 
         }catch (Exception e){
+
             e.printStackTrace();
         }
 
@@ -42,6 +43,7 @@ public class Server {
                 e.output = new ObjectOutputStream(newclient.getOutputStream());
 
                 broadcast_new_client(newclient, e);
+                e.send_connected_users();
                 e.start();
 
                 clients.add(e);

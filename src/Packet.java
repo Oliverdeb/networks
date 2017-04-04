@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 
 /**
@@ -10,6 +11,7 @@ public class Packet implements Serializable{
     private String user;
     private String time;
     private Image img;
+    private String fileLoc;
     private String type;
 
 
@@ -26,7 +28,6 @@ public class Packet implements Serializable{
         this.time = time;
         this.type = type;
     }
-
     public void setImg(Image img){
         this.img = img;
     }

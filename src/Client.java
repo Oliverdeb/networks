@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
@@ -14,8 +15,10 @@ public class Client {
     private ObjectInputStream input;
     private ObjectOutputStream output;
     private String name;
-    private boolean writing = false;
-    private Stack<String> mess =new Stack<String>();
+    private volatile boolean flag = false;
+    private  boolean writing = false;
+
+//    private Stack<String> mess =new Stack<String>();
 
     public static void main(String[] args) {
         new Client();
@@ -26,6 +29,11 @@ public class Client {
     public void send_messsage(String message, String name, String time) throws IOException {
         output.writeObject(new Packet(message, name, time));
     }
+    public void send_messsage(String message, String name, String time, String location) throws IOException {
+
+        output.writeObject(new Packet(message, name, time));
+    }
+
 
     public Client(){
 
@@ -42,7 +50,6 @@ public class Client {
 
         try {
             output = new ObjectOutputStream(client_socket.getOutputStream());
-
             input = new ObjectInputStream(client_socket.getInputStream());
 
         } catch (IOException e) {
@@ -71,15 +78,19 @@ public class Client {
                     }
                     if (packet.getUser().equals("server")){
                         // For User X has joined the room
+                        if (packet.getMessage().contains("Connected")){
+//                            System.out.println("outed");
+                            flag = true;
+                        }
                         System.out.println(packet.getMessage());
                     }else{
                         // For normal message output
                         String type = packet.getType() == null ? "" : "[" + packet.getType() + "]";
-                        if (!writing ){
+//                        if (!writing ){
                            System.out.println(type + packet.getTime() + " " + packet.getUser()+ ": " + packet.getMessage());
-                       }else{
-                            mess.push(type + packet.getTime() + " " + packet.getUser()+ ": " + packet.getMessage());
-                       }
+//                       }else{
+//                            mess.push(type + packet.getTime() + " " + packet.getUser()+ ": " + packet.getMessage());
+//                       }
                         
                     }
                 }
@@ -89,20 +100,25 @@ public class Client {
         outputHandler.start();
 
         while (true) {
-            System.out.println("Press enter to type message: ");
-            cInputScanner.nextLine();
-            writing = true;
+//            System.out.println("Press enter to type message: ");
+//            cInputScanner.nextLine();
+//            writing = true;
+            while (!flag){}
             System.out.print("You: ");
 
             try {
                 // Send message to server
-                send_messsage(cInputScanner.nextLine(), name, Util.time_now());
-                writing = false;
-                if (mess.size() != 0){
-                    while (mess.size() != 0){
-                        System.out.println(mess.pop());
-                    }
+                String msg = cInputScanner.nextLine();
+                if (msg.startsWith("/file")){
+                    System.out.println("send file");
                 }
+                send_messsage(msg, name, Util.time_now());
+//                writing = false;
+//                if (mess.size() != 0){
+//                    while (mess.size() != 0){
+//                        System.out.println(mess.pop());
+//                    }
+//                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
