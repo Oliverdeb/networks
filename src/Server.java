@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * Created by dbroli001 on 2017/03/28.
@@ -30,6 +32,23 @@ public class Server {
         System.out.println("Server ready to accept connections");
 
 
+        Thread exit = new Thread(){
+          public void run(){
+              Scanner c = new Scanner(System.in);
+              String inp = c.nextLine();
+              while(!inp.equalsIgnoreCase("/quit")){
+                  inp = c.nextLine();
+              }
+              try {
+                  server_socket.close();
+              } catch (IOException e) {
+                  e.printStackTrace();
+              }
+              System.exit(0);
+          }
+        };
+        exit.start();
+
         while(true){
             try{
                 /*
@@ -42,7 +61,7 @@ public class Server {
                 e.input = new ObjectInputStream(newclient.getInputStream());
                 e.output = new ObjectOutputStream(newclient.getOutputStream());
 
-                broadcast_new_client(newclient, e);
+                broadcast_new_client(e, " joined");
                 e.send_connected_users();
                 e.start();
 
@@ -57,7 +76,18 @@ public class Server {
 
     }
 
-    public void broadcast_new_client(Socket client, Listener listener){
+    public static void send_files(Packet packet){
+        for(Listener client: clients){
+            if(packet.getUser().equalsIgnoreCase(client.getClientName())) continue;
+            try {
+                client.handle_file_sending(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void broadcast_new_client(Listener listener, String action){
 
         /*
         Broadcast to all connected clients when a new client joins the room
@@ -66,7 +96,7 @@ public class Server {
 
             Packet p = (Packet)listener.input.readObject();
             listener.setClientName(p.getUser());
-            relay_message( p.getUser()+ " joined the room.", "server", Util.time_now());
+            relay_message(listener, p.getUser() + action + " the room.", "server");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -76,7 +106,7 @@ public class Server {
 
     }
 
-    public void relay_message(String message, String client_name, String time) throws IOException {
+    public static void relay_message(Listener listener, String message, String client_name) throws IOException {
 
         /*
         Relay new message to all connected clients.
@@ -84,9 +114,10 @@ public class Server {
 
         System.out.println(message);
         for(Listener client : clients) {
+            if (client.equals(listener)) continue;
             // Loop through list of clients and send the message to them
             System.out.println("relaying to " + client.getClientName());
-            client.send_message(message, client_name, time);
+            client.send_message(message, client_name, "");
         }
     }
 

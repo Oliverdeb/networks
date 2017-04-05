@@ -20,8 +20,7 @@ public class Util {
     }
 
     public static String parse_location(String input){
-        return input.substring(input.indexOf("file ") + 5);
+        return input.split(" ")[1];
     }
-
 
 }

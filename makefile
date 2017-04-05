@@ -16,10 +16,16 @@ Server.class:
 	rm -rf bin/Listener.class bin/Server.class
 	javac $(JFLAGS) src/Listener.java src/Server.java
 
-run:
-	@open; java -cp bin Server &
-	@open; java -cp bin Client &
-	@open; java -cp bin Client &
+run: clean all
+	@gnome-terminal -e "java -cp bin Server"
+	@gnome-terminal -e "java -cp bin Client"
+	java -cp bin Client
+
+client: all
+	java -cp bin Client
+
+server: all
+	java -cp bin Server
 
 clean:
 	@rm -f bin/*

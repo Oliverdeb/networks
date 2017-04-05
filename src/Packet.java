@@ -10,9 +10,9 @@ public class Packet implements Serializable{
     private String message;
     private String user;
     private String time;
-    private Image img;
-    private String fileLoc;
     private String type;
+    private byte[] imgBytes;
+    private String fileName;
 
 
     public Packet(String message, String user, String time){
@@ -20,6 +20,8 @@ public class Packet implements Serializable{
         this.user = user;
         this.time = time;
         this.type = null;
+        this.imgBytes = null;
+        this.fileName = null;
     }
 
     public Packet(String message, String user, String time, String type){
@@ -27,13 +29,29 @@ public class Packet implements Serializable{
         this.user = user;
         this.time = time;
         this.type = type;
-    }
-    public void setImg(Image img){
-        this.img = img;
+        this.imgBytes = null;
+        this.fileName = null;
     }
 
-    public Image getImg(){
-        return this.img;
+    public Packet(String message, String user, String time, String type, byte[] imgBytes, String fileName){
+        this.message = message;
+        this.user = user;
+        this.time = time;
+        this.type = type;
+        this.imgBytes = imgBytes;
+        this.fileName = fileName;
+    }
+
+    public Packet(Packet p){
+        this(p.getMessage(), p.getUser(), p.getTime(), p.getType(), p.getImgBytes(), p.getFileName());
+    }
+
+    public String getFileName(){
+        return fileName;
+    }
+
+    public byte[] getImgBytes(){
+        return this.imgBytes;
     }
 
     public String getTime(){
