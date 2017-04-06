@@ -161,6 +161,7 @@ public class Client {
                                     fos = new FileOutputStream(location);
                                     fos.write(packet.getImgBytes());
                                     fos.close();
+                                    System.out.println("File saved successfully to " + location);
                                 } catch (FileNotFoundException e) {
                                     e.printStackTrace();
                                 } catch (IOException e) {
@@ -184,7 +185,7 @@ public class Client {
         while (true) {
             while (!recv_list){}
             if (waitingForLoc){
-                System.out.print("Enter a path and filename e.g (/path/to/file.jpeg): ");
+                System.out.print("Enter a path and filename e.g (path/to/file.jpeg): ");
             }else{
                 System.out.print("You: ");
             }

@@ -24,7 +24,6 @@ public class Server {
             server_socket = new ServerSocket(9600);
 
         }catch (Exception e){
-
             e.printStackTrace();
         }
 

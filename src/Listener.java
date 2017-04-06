@@ -81,10 +81,11 @@ public class Listener extends Thread {
 
                 case "accept_transfer":
                     System.out.println("initiating send");
-                    System.out.println(tosend.getUser() + tosend.getMessage() + tosend.getFileName() + tosend.getType());
+//                    System.out.println(tosend.getUser() + tosend.getMessage() + tosend.getFileName() + tosend.getType());
                     try {
 
                         send_message(tosend);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -92,7 +93,7 @@ public class Listener extends Thread {
                 case "decline_transfer":
                     System.out.println("notifying not sending");
                         for (Listener client : Server.clients){
-                            System.out.println(tosend.getUser() + client.getClientName());
+//                            System.out.println(tosend.getUser() + client.getClientName());
                             if (client.getClientName().equalsIgnoreCase(tosend.getUser())){
                                 System.out.println("SENDING");
                                 try {
